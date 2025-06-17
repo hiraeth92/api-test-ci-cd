@@ -51,7 +51,7 @@ jobs:
           path: ./htmlcov
 
       - name: Deploy to GitHub Pages
-        uses: actions/configure-pages@v3
+        uses: actions/configure-pages@v4
 
       - name: Upload artifact to GitHub Pages
         uses: actions/upload-pages-artifact@v1
