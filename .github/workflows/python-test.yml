@@ -30,8 +30,9 @@ jobs:
           pytest --cov=. --cov-report=html
 
       - name: Upload coverage report
-        uses: actions/upload-pages-artifact@v1
+        uses: actions/upload-artifact@v4
         with:
+          name: coverage-report
           path: htmlcov
 
   deploy:
@@ -45,6 +46,9 @@ jobs:
       url: ${{ steps.deployment.outputs.page_url }}
 
     steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
       - name: Deploy to GitHub Pages
         id: deployment
         uses: actions/deploy-pages@v2
