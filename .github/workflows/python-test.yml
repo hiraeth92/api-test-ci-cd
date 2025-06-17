@@ -50,14 +50,14 @@ jobs:
           name: coverage-report
           path: ./htmlcov
 
-      - name: Deploy to GitHub Pages
+      - name: Configure GitHub Pages
         uses: actions/configure-pages@v4
 
       - name: Upload artifact to GitHub Pages
-        uses: actions/upload-pages-artifact@v1
+        uses: actions/upload-pages-artifact@v3
         with:
           path: ./htmlcov
 
       - name: Deploy GitHub Pages
         id: deployment
-        uses: actions/deploy-pages@v1
+        uses: actions/deploy-pages@v3
