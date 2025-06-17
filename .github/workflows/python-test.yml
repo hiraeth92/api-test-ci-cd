@@ -33,7 +33,7 @@ jobs:
       - name: Upload coverage report artifact
         uses: actions/upload-artifact@v4
         with:
-          name: coverage-report
+          name: coverage-report-${{ github.run_id }}
           path: htmlcov
 
   deploy:
@@ -42,22 +42,29 @@ jobs:
     permissions:
       pages: write
       id-token: write
+      contents: read
+    environment:
+      name: github-pages
+      url: ${{ steps.deploy-pages.outputs.page_url }}
 
     steps:
+      - name: Checkout repo
+        uses: actions/checkout@v4
+
       - name: Download coverage report artifact
         uses: actions/download-artifact@v4
         with:
-          name: coverage-report
+          name: coverage-report-${{ github.run_id }}
           path: ./htmlcov
 
-      - name: Deploy to GitHub Pages
-        uses: actions/configure-pages@v3
+      - name: Configure GitHub Pages
+        uses: actions/configure-pages@v4
 
       - name: Upload artifact to GitHub Pages
-        uses: actions/upload-pages-artifact@v1
+        uses: actions/upload-pages-artifact@v2
         with:
           path: ./htmlcov
 
-      - name: Deploy GitHub Pages
-        id: deployment
-        uses: actions/deploy-pages@v1
+      - name: Deploy to GitHub Pages
+        id: deploy-pages
+        uses: actions/deploy-pages@v4
