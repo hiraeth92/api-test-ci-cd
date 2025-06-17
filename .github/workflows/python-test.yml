@@ -63,7 +63,7 @@ jobs:
         uses: actions/configure-pages@v4
 
       - name: Upload HTML to GitHub Pages
-        uses: actions/upload-pages-artifact@v1
+        uses: actions/upload-pages-artifact@v2
         with:
           path: ./htmlcov
 
