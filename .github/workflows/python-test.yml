@@ -1,62 +1,70 @@
+# 🧪 CI/CD 工作流程：執行 Python 測試並部署 Coverage HTML 報告到 GitHub Pages
 name: Python Test and Deploy Coverage
 
+# 📌 觸發條件：
+# 當有 push 或 pull request 發生在 main 分支時，執行本流程
 on:
   push:
     branches: [ main ]
   pull_request:
     branches: [ main ]
 
+# 🔐 權限設定（GitHub Pages 需要 pages 與 id-token 權限）
 permissions:
-  contents: read
-  pages: write
-  id-token: write
+  contents: read        # 讀取程式碼
+  pages: write          # 寫入 GitHub Pages
+  id-token: write       # 身分驗證令牌，用於 GitHub Pages 授權
 
+# 🚦 限制同時間只能執行一個部署流程（避免多重部署衝突）
 concurrency:
-  group: "pages"
-  cancel-in-progress: true
+  group: "pages"        # 將同一類型工作歸為同一組
+  cancel-in-progress: true  # 有新流程啟動時，取消正在執行的舊流程
 
+# 🧩 主流程區塊
 jobs:
   test_and_deploy:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-latest  # 指定執行環境為最新版 Ubuntu
 
+    # 🔗 宣告部署環境為 GitHub Pages
     environment:
       name: github-pages
-      url: ${{ steps.deploy.outputs.page_url }}
+      url: ${{ steps.deploy.outputs.page_url }}  # 設定部署完成後的頁面 URL
 
     steps:
-      # 1. 拉取原始碼
+      # ✅ 步驟 1：拉取原始碼
       - name: Checkout code
-        uses: actions/checkout@v4
+        uses: actions/checkout@v4  # 使用官方 checkout 套件拉取 Git 儲存庫內容
 
-      # 2. 安裝 Python 3.11
+      # 🐍 步驟 2：安裝 Python 環境
       - name: Setup Python
         uses: actions/setup-python@v5
         with:
-          python-version: '3.11'
+          python-version: '3.11'  # 指定 Python 版本為 3.11
 
-      # 3. 安裝相依套件
+      # 📦 步驟 3：安裝 Python 套件（從 requirements.txt）
       - name: Install dependencies
         run: |
-          python -m pip install --upgrade pip
-          pip install -r requirements.txt
+          python -m pip install --upgrade pip         # 更新 pip 至最新版
+          pip install -r requirements.txt             # 安裝專案所需依賴
 
-      # 4. 建立 coverage 輸出資料夾並執行測試
+      # 🧪 步驟 4：執行 pytest 測試並產生 coverage HTML 報告
       - name: Run tests and generate coverage
         run: |
-          mkdir -p reports/htmlcov
+          mkdir -p reports/htmlcov                    # 建立報告輸出資料夾
           pytest --cov=. --cov-report=html:reports/htmlcov
+          # 使用 pytest-cov 產出 HTML 格式的 coverage 報告到指定資料夾
 
-      # 5. 設定 GitHub Pages 發佈
+      # 🌍 步驟 5：設定 GitHub Pages 發佈資訊
       - name: Setup GitHub Pages
-        uses: actions/configure-pages@v4
+        uses: actions/configure-pages@v4              # 使用新版 GitHub Pages 設定 action
 
-      # 6. 上傳 HTML coverage 給 GitHub Pages
+      # 🗃️ 步驟 6：將 coverage HTML 報告打包上傳為 GitHub Pages 的 artifact
       - name: Upload coverage HTML to GitHub Pages
-        uses: actions/upload-pages-artifact@v3
+        uses: actions/upload-pages-artifact@v3        # 上傳給 Pages 用的特定 action（不是 upload-artifact）
         with:
-          path: reports/htmlcov
+          path: reports/htmlcov                       # 指定要上傳的 coverage 路徑（需與上方產出路徑一致）
 
-      # 7. 發佈到 GitHub Pages
+      # 🚀 步驟 7：實際將報告部署到 GitHub Pages
       - name: Deploy to GitHub Pages
-        id: deploy
-        uses: actions/deploy-pages@v4
+        id: deploy                                    # 指定 ID，以便後續引用 URL
+        uses: actions/deploy-pages@v4                 # 使用新版 deploy-pages 完成部署
