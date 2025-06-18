@@ -1,4 +1,3 @@
-```markdown
 # Automated RESTful API Testing with CI/CD
 
 ![CI](https://github.com/hiraeth92/api-test-ci-cd/actions/workflows/test.yml/badge.svg)
@@ -49,7 +48,6 @@
 ├── .coverage                        # coverage 原始數據（pytest 產出）
 └── README.md                        # 專案說明文件
 
-````
 
 ---
 
