@@ -52,7 +52,7 @@ jobs:
 
       # 6. 上傳 HTML coverage 給 GitHub Pages
       - name: Upload coverage HTML to GitHub Pages
-        uses: actions/upload-pages-artifact@v2
+        uses: actions/upload-pages-artifact@v4
         with:
           path: reports/htmlcov
 
