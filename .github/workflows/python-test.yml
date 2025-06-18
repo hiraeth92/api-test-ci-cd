@@ -18,36 +18,37 @@ concurrency:
 jobs:
   test_and_deploy:
     runs-on: ubuntu-latest
+
     environment:
       name: github-pages
       url: ${{ steps.deploy.outputs.page_url }}
 
     steps:
-      - name: Checkout code
-        uses: actions/checkout@v4
+    - name: Checkout code
+      uses: actions/checkout@v4
 
-      - name: Setup Python
-        uses: actions/setup-python@v5
-        with:
-          python-version: '3.11'
+    - name: Setup Python
+      uses: actions/setup-python@v5
+      with:
+        python-version: '3.11'
 
-      - name: Install dependencies
-        run: |
-          python -m pip install --upgrade pip
-          pip install -r requirements.txt
+    - name: Install dependencies
+      run: |
+        python -m pip install --upgrade pip
+        pip install -r requirements.txt
 
-      - name: Run tests and generate coverage
-        run: |
-          pytest --cov=. --cov-report=html
+    - name: Run tests and generate coverage
+      run: |
+        pytest --cov=tests --cov-report=html:reports/htmlcov
 
-      - name: Setup GitHub Pages
-        uses: actions/configure-pages@v4
+    - name: Setup GitHub Pages
+      uses: actions/configure-pages@v4
 
-      - name: Upload coverage HTML to GitHub Pages
-        uses: actions/upload-pages-artifact@v2
-        with:
-          path: htmlcov
+    - name: Upload HTML coverage to GitHub Pages
+      uses: actions/upload-pages-artifact@v3
+      with:
+        path: reports/htmlcov
 
-      - name: Deploy to GitHub Pages
-        id: deploy
-        uses: actions/deploy-pages@v4
+    - name: Deploy to GitHub Pages
+      id: deploy
+      uses: actions/deploy-pages@v4
